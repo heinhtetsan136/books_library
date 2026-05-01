@@ -43,7 +43,11 @@ class _BottomNavState extends State<BottomNav> {
       child: Container(
         padding: EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: appThemeTokens.border))
+          border: Border(
+            top: BorderSide(
+              color: appThemeTokens.border,
+            ),
+          ),
         ),
         child: NavigationBar(
           selectedIndex: _selectedIndex,
