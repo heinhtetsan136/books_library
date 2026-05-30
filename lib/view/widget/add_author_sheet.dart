@@ -1,6 +1,9 @@
 import 'package:book_library/provider/author_provider.dart';
 import 'package:book_library/view/widget/input_field_widget.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../const/app_theme_token.dart';
@@ -15,21 +18,19 @@ class AddAuthorSheet extends StatefulWidget {
 
 class _AddAuthorSheetState
     extends State<AddAuthorSheet> {
+  final TextEditingController _namecontroller =
+      TextEditingController();
+  final TextEditingController
+  _descriptionController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final authorProvider =
-        Provider.of<AuthorProvider>(
-          context,
-          listen: false,
-        );
+        Provider.of<AuthorProvider>(context);
     final appThemeToken = Theme.of(
       context,
     ).extension<AppThemeTokens>()!;
-    final TextEditingController _namecontroller =
-        TextEditingController();
-    final TextEditingController
-    _descriptionController =
-        TextEditingController();
     return Container(
       padding: EdgeInsets.all(30),
       height:
@@ -53,7 +54,7 @@ class _AddAuthorSheetState
                 MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Insert Book Record",
+                "Insert Author Record",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -93,9 +94,22 @@ class _AddAuthorSheetState
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              authorProvider.uploadImage();
+            },
             child: Text("Upload Photo"),
           ),
+          if (authorProvider.photo != null)
+            Center(
+              child: Image.memory(
+                authorProvider.photo!,
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+              ),
+            ),
+          if (authorProvider.photo != null)
+            SizedBox(height: 8),
           InkWell(
             onTap: () async {
               String name = _namecontroller.text
@@ -104,14 +118,56 @@ class _AddAuthorSheetState
                   .text
                   .trim();
               if (name.isNotEmpty &&
-                  desc.isNotEmpty) {}
+                  desc.isNotEmpty) {
+                int result = await authorProvider
+                    .saveAuthor(
+                      name: name,
+                      description: desc,
+                    );
+                print(result);
+                if (result > 0 &&
+                    context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Save Sucessfully",
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    return AlertDialog(
+                      title: Text("Data Missing"),
+                      content: Text(
+                        "Name or Description is missing",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(
+                              context,
+                            );
+                          },
+                          child: Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
             child: Container(
               padding: EdgeInsets.symmetric(
                 vertical: 16,
               ),
               alignment: Alignment.center,
-              height: 50,
+
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius:

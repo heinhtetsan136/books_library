@@ -32,7 +32,15 @@ class LibraryDbService {
   }) async {
     return _database.rawInsert(
       'insert into author (name,description,photo,fav) values(?,?,?,?)',
-      [name, description, photo],
+      [name, description, photo, null],
     );
+  }
+
+  Future<List<Map<String, dynamic>>>
+  getAllAuthor() async {
+    final authors = _database.rawQuery(
+      "select * from $_authorTable ",
+    );
+    return authors;
   }
 }
