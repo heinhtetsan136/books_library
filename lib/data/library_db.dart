@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:book_library/data/author_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -36,11 +37,30 @@ class LibraryDbService {
     );
   }
 
-  Future<List<Map<String, dynamic>>>
-  getAllAuthor() async {
-    final authors = _database.rawQuery(
+  Future<List<AuthorModel>> getAllAuthor() async {
+    final listOfMap = await _database.rawQuery(
       "select * from $_authorTable ",
     );
-    return authors;
+
+    return listOfMap.map((json) {
+      return AuthorModel.fromJson(json);
+    }).toList();
+  }
+
+  Future<int> getFav(int id) async {
+    final favMap = await _database.rawQuery(
+      "select fav from $_authorTable where id='$id'  ",
+    );
+    if (favMap.isNotEmpty) {
+      return (favMap.first['fav'] as int?) ?? 0;
+    }
+    return 0;
+  }
+
+  Future<int> updateFav(int id) async {
+    final result = await _database.rawUpdate(
+      "  update $_authorTable set fav =1 where id = $id",
+    );
+    return result;
   }
 }

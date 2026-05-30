@@ -1,3 +1,4 @@
+import 'package:book_library/data/author_model.dart';
 import 'package:book_library/data/library_db.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,7 +8,7 @@ class AuthorProvider extends ChangeNotifier {
   final LibraryDbService libraryDbService =
       LibraryDbService();
   ImagePicker imagePicker = ImagePicker();
-  List<Map<String, dynamic>> author = [];
+  List<AuthorModel> author = [];
 
   Future<void> uploadImage() async {
     XFile? file = await imagePicker.pickImage(
