@@ -9,6 +9,7 @@ class AuthorProvider extends ChangeNotifier {
       LibraryDbService();
   ImagePicker imagePicker = ImagePicker();
   List<AuthorModel> author = [];
+  int isDetailFav = 0;
 
   Future<void> uploadImage() async {
     XFile? file = await imagePicker.pickImage(
@@ -26,6 +27,24 @@ class AuthorProvider extends ChangeNotifier {
     author = await libraryDbService
         .getAllAuthor();
     notifyListeners();
+  }
+
+  Future<int> updateFav(int id, int isFav) async {
+    final result = await libraryDbService
+        .updateFav(id, isFav);
+    isDetailFav = isFav;
+    notifyListeners();
+
+    print("result is $result");
+    return result;
+  }
+
+  Future<int> getFav(int id) async {
+    isDetailFav = await libraryDbService.getFav(
+      id,
+    );
+    notifyListeners();
+    return isDetailFav;
   }
 
   Future<int> saveAuthor({

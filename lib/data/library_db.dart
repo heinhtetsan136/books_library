@@ -57,9 +57,10 @@ class LibraryDbService {
     return 0;
   }
 
-  Future<int> updateFav(int id) async {
+  Future<int> updateFav(int id, int isFav) async {
+    print("id is $id and isFav is $isFav");
     final result = await _database.rawUpdate(
-      "  update $_authorTable set fav =1 where id = $id",
+      "  update $_authorTable set fav =$isFav where id = '$id'",
     );
     return result;
   }

@@ -22,6 +22,20 @@ class AuthorDetails extends StatefulWidget {
 class _AuthorDetailsState
     extends State<AuthorDetails> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((
+      _,
+    ) {
+      Provider.of<AuthorProvider>(
+        context,
+        listen: false,
+      ).getFav(widget.author.id);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final AuthorModel author = widget.author;
     final Uint8List? photo = author.photo;
@@ -30,6 +44,11 @@ class _AuthorDetailsState
     final themeTokens = Theme.of(
       context,
     ).extension<AppThemeTokens>()!;
+    AuthorProvider authorProvider =
+        Provider.of<AuthorProvider>(
+          context,
+          listen: false,
+        );
     return Scaffold(
       body: Stack(
         clipBehavior: Clip.none,
@@ -77,17 +96,27 @@ class _AuthorDetailsState
               ),
               child: Consumer<AuthorProvider>(
                 builder: (context, provider, child) {
-                  // bool isFav = provider.isDetailFav == 1;
+                  bool isFav =
+                      provider.isDetailFav == 1;
+                  print(isFav);
+                  print(provider.isDetailFav);
                   return IconButton(
                     onPressed: () {
+                      provider.updateFav(
+                        author.id,
+                        isFav ? 0 : 1,
+                      );
+
                       // provider.updateFavourite(
                       //   widget.authorData.id,
                       //   isFav ? 0 : 1,
                       // );
                     },
-                    icon: Icon(
-                      Icons.favorite_border,
-                    ),
+                    icon: isFav
+                        ? Icon(Icons.favorite)
+                        : Icon(
+                            Icons.favorite_border,
+                          ),
                   );
                 },
               ),
