@@ -33,7 +33,7 @@ class AuthorProvider extends ChangeNotifier {
     final result = await libraryDbService
         .updateFav(id, isFav);
     isDetailFav = isFav;
-    notifyListeners();
+    isDetailFav = isFav;
 
     print("result is $result");
     return result;
