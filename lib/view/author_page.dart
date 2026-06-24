@@ -136,7 +136,7 @@ class _AuthorPageState extends State<AuthorPage> {
                                 context: context,
                                 builder: (_) {
                                   return AddAuthorSheet(
-                                    author:
+                                    authormodel:
                                         author,
                                   );
                                 },

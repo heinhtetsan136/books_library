@@ -10,9 +10,9 @@ import 'package:provider/provider.dart';
 import '../../const/app_theme_token.dart';
 
 class AddAuthorSheet extends StatefulWidget {
-  final AuthorModel? author;
+  final AuthorModel? authormodel;
 
-  AddAuthorSheet({super.key, this.author});
+  AddAuthorSheet({super.key, this.authormodel});
 
   @override
   State<AddAuthorSheet> createState() =>
@@ -31,16 +31,18 @@ class _AddAuthorSheetState
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.author != null) {
-      _namecontroller.text = widget.author!.name;
+    if (widget.authormodel != null) {
+      _namecontroller.text =
+          widget.authormodel!.name;
       _descriptionController.text =
-          widget.author!.description;
+          widget.authormodel!.description;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isUpdate = widget.author != null;
+    final bool isUpdate =
+        widget.authormodel != null;
     final authorProvider =
         Provider.of<AuthorProvider>(context);
     final appThemeToken = Theme.of(
@@ -147,7 +149,9 @@ class _AddAuthorSheetState
                           .updateAuthor(
                             name: name,
                             description: desc,
-                            id: widget.author!.id,
+                            id: widget
+                                .authormodel!
+                                .id,
                           )
                     : await authorProvider
                           .saveAuthor(
