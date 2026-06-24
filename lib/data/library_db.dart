@@ -37,6 +37,20 @@ class LibraryDbService {
     );
   }
 
+  Future<int> updateAuthor({
+    required String name,
+    required int id,
+    required String description,
+  }) async {
+    final result = await _database.update(
+      _authorTable,
+      {"name": name, "description": description},
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    return result;
+  }
+
   Future<List<AuthorModel>> getAllAuthor() async {
     final listOfMap = await _database.rawQuery(
       "select * from $_authorTable ",
@@ -61,6 +75,13 @@ class LibraryDbService {
     print("id is $id and isFav is $isFav");
     final result = await _database.rawUpdate(
       "  update $_authorTable set fav =$isFav where id = '$id'",
+    );
+    return result;
+  }
+
+  Future<int> deleteAuthor(int id) async {
+    final result = await _database.rawDelete(
+      "delete from $_authorTable where id='$id'",
     );
     return result;
   }

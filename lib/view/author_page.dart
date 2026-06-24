@@ -4,6 +4,7 @@ import 'package:book_library/const/app_theme_token.dart';
 import 'package:book_library/data/author_model.dart';
 import 'package:book_library/provider/author_provider.dart';
 import 'package:book_library/view/author_details.dart';
+import 'package:book_library/view/widget/add_author_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,6 +33,8 @@ class _AuthorPageState extends State<AuthorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authorProvider =
+        Provider.of<AuthorProvider>(context);
     final appThemeToken = Theme.of(
       context,
     ).extension<AppThemeTokens>()!;
@@ -45,6 +48,7 @@ class _AuthorPageState extends State<AuthorPage> {
             itemCount: authors.length,
             itemBuilder: (_, index) {
               final author = authors[index];
+              final id = author.id;
               final Uint8List? photo =
                   author.photo;
               final String name = author.name;
@@ -127,13 +131,28 @@ class _AuthorPageState extends State<AuthorPage> {
                       Column(
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (_) {
+                                  return AddAuthorSheet(
+                                    author:
+                                        author,
+                                  );
+                                },
+                              );
+                            },
                             icon: Icon(
                               Icons.edit,
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              await provider
+                                  .deleteAuthor(
+                                    id,
+                                  );
+                            },
                             icon: Icon(
                               Icons.delete,
                             ),

@@ -1,3 +1,4 @@
+import 'package:book_library/data/author_model.dart';
 import 'package:book_library/provider/author_provider.dart';
 import 'package:book_library/view/widget/input_field_widget.dart';
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,9 @@ import 'package:provider/provider.dart';
 import '../../const/app_theme_token.dart';
 
 class AddAuthorSheet extends StatefulWidget {
-  const AddAuthorSheet({super.key});
+  final AuthorModel? author;
+
+  AddAuthorSheet({super.key, this.author});
 
   @override
   State<AddAuthorSheet> createState() =>
@@ -25,12 +28,25 @@ class _AddAuthorSheetState
       TextEditingController();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.author != null) {
+      _namecontroller.text = widget.author!.name;
+      _descriptionController.text =
+          widget.author!.description;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bool isUpdate = widget.author != null;
     final authorProvider =
         Provider.of<AuthorProvider>(context);
     final appThemeToken = Theme.of(
       context,
     ).extension<AppThemeTokens>()!;
+
     return Container(
       padding: EdgeInsets.all(30),
       height:
@@ -54,7 +70,9 @@ class _AddAuthorSheetState
                 MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Insert Author Record",
+                isUpdate
+                    ? "Update Author Record"
+                    : "Insert Author Record",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -86,19 +104,24 @@ class _AddAuthorSheetState
             hintText: "Enter Description",
           ),
           SizedBox(height: 8),
-          Text(
-            "Upload Photo(Optional)",
-            style: TextStyle(
-              color: appThemeToken.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              authorProvider.uploadImage();
-            },
-            child: Text("Upload Photo"),
-          ),
+          isUpdate
+              ? SizedBox()
+              : Text(
+                  "Upload Photo(Optional)",
+                  style: TextStyle(
+                    color: appThemeToken
+                        .textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+          isUpdate
+              ? SizedBox()
+              : TextButton(
+                  onPressed: () async {
+                    authorProvider.uploadImage();
+                  },
+                  child: Text("Upload Photo"),
+                ),
           if (authorProvider.photo != null)
             Center(
               child: Image.memory(
@@ -119,11 +142,18 @@ class _AddAuthorSheetState
                   .trim();
               if (name.isNotEmpty &&
                   desc.isNotEmpty) {
-                int result = await authorProvider
-                    .saveAuthor(
-                      name: name,
-                      description: desc,
-                    );
+                int result = isUpdate
+                    ? await authorProvider
+                          .updateAuthor(
+                            name: name,
+                            description: desc,
+                            id: widget.author!.id,
+                          )
+                    : await authorProvider
+                          .saveAuthor(
+                            name: name,
+                            description: desc,
+                          );
                 print(result);
                 if (result > 0 &&
                     context.mounted) {

@@ -23,6 +23,22 @@ class AuthorProvider extends ChangeNotifier {
     }
   }
 
+  Future<int> updateAuthor({
+    required String name,
+    required String description,
+    required int id,
+  }) async {
+    final result = await libraryDbService
+        .updateAuthor(
+          name: name,
+          id: id,
+          description: description,
+        );
+    getAllAuthor();
+    notifyListeners();
+    return result;
+  }
+
   void getAllAuthor() async {
     author = await libraryDbService
         .getAllAuthor();
@@ -33,9 +49,8 @@ class AuthorProvider extends ChangeNotifier {
     final result = await libraryDbService
         .updateFav(id, isFav);
     isDetailFav = isFav;
-    isDetailFav = isFav;
+    notifyListeners();
 
-    print("result is $result");
     return result;
   }
 
@@ -61,6 +76,14 @@ class AuthorProvider extends ChangeNotifier {
           photo: photo,
         );
     getAllAuthor();
+    return result;
+  }
+
+  Future<int> deleteAuthor(int id) async {
+    final result = await libraryDbService
+        .deleteAuthor(id);
+    getAllAuthor();
+    notifyListeners();
     return result;
   }
 }
